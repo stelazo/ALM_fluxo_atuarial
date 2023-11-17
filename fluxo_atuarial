@@ -1,0 +1,46 @@
+# create: Stephany Lazo
+
+# Analise explorátoria de dadospara ALM
+
+# Para o grupo dos professores as novas regras s?o de idade minima 57 para mulheres e 60 para homens 
+# Para o grupo dos policiais civis as novas regras s?o de idade minima 55 para mulheres e 55 para homens 
+# Para o grupo dos servidores  as novas regras s?o de idade minima 62 para mulheres e 65 para homens
+
+rm(list=ls())
+#######################
+# Libraries
+library(tidyverse)
+library(gdata)
+library(gridExtra)
+library(readxl)
+library(scatterplot3d)
+library(rgl)
+library(KernSmooth)
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(writexl)
+
+dados = read_excel("Z:/GERENCIA/ÁREA PESSOAL/STEPHANY LAZO/1- Estudos/13- ALM/2022-12-RPPS-FIN-results_.xlsx", 
+                   sheet = "AMF-LRF")
+
+retirar_linhas = c(1:6)
+dados = dados[-retirar_linhas,]
+colnames(dados) = dados[1,]
+dados = dados[-1,]
+dados$'FLUXO SEM INVESTIMENTOS (III = I + II)' = as.numeric(dados$`Receitas previdenciárias`) + as.numeric(dados$`Despesas previdenciárias`)
+
+
+fluxo_atuarial = data.frame(ANO = dados$Exercício,
+                            'RECEITAS PREVIDENCIARIAS (I)' = dados$`Receitas previdenciárias`,
+                            'DESPESAS PREVIDENCIARIAS (II)' = dados$`Despesas previdenciárias`,
+                            'FLUXO SEM INVESTIMENTOS (III = I + II)' = dados$'FLUXO SEM INVESTIMENTOS (III = I + II)',
+                            'RESULTADO DOS INVESTIMENTOS (IV)' = rep(" "),
+                            'FLUXO ANUAL PROJETADO (V = II + IV)' = rep(" "),
+                            'PATRIMONIO PROJETADO'= rep(" "))
+
+
+# Exportando tabelas para o Excel
+write_xlsx(list("Ativo" = tab_ativos,
+                "Inativo e Pesionista" = tab_inativos_pensionistas),
+           path = "./dados.xlsx")
